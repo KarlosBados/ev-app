@@ -12,7 +12,7 @@ window.appData = savedData ? JSON.parse(savedData) : {
     odometer: 0,
     vehicle_consumption: 0,
     service_start_date: "",
-    last_update: "" 
+    last_update: ""
 };
 
 window.saveData = (newData) => {

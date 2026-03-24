@@ -1,42 +1,32 @@
-export function renderVehicleSettings(data, saveData) {
-    const app = document.getElementById("app");
+import { renderDashboard } from './ui-dashboard.js';
+import { renderVehicleSettings } from './ui-vehicle.js';
+import { renderSessionsList } from './ui-sessions-list.js';
+import { renderAddSession } from './ui-add-session.js';
+import { renderTariffs } from './ui-tariffs.js';
+import { renderImport } from './ui-import.js';
 
-    window.processVehicleSave = () => {
-        const odo = document.getElementById("odo-input").value;
-        const cons = document.getElementById("cons-input").value;
-        const date = document.getElementById("date-input").value;
+const savedData = localStorage.getItem('ev_data');
+window.appData = savedData ? JSON.parse(savedData) : {
+    charging_sessions: [],
+    tariffs: [],
+    odometer: 0,
+    vehicle_consumption: 0,
+    service_start_date: "",
+    last_update: ""
+};
 
-        data.odometer = parseFloat(odo) || 0;
-        data.vehicle_consumption = parseFloat(String(cons).replace(',', '.')) || 0;
-        data.service_start_date = date;
+window.saveData = (newData) => {
+    localStorage.setItem('ev_data', JSON.stringify(newData));
+    window.appData = newData;
+};
 
-        // TADY SE VYTVÁŘÍ TEN UPDATE ČAS
-        const ted = new Date();
-        data.last_update = ted.toLocaleString('cs-CZ', {
-            day: '2.digit',
-            month: '2.digit',
-            year: 'numeric',
-            hour: '2.digit',
-            minute: '2.digit'
-        });
+window.showDashboard = () => renderDashboard(window.appData);
+window.showVehicle = () => renderVehicleSettings(window.appData, window.saveData);
+window.showAddSession = () => renderAddSession(window.appData, window.saveData);
+window.showSessionsList = () => renderSessionsList(window.appData, window.saveData);
+window.showTariffs = () => renderTariffs(window.appData, window.saveData);
+window.showImport = () => renderImport(window.appData, window.saveData);
 
-        saveData(data);
-        alert("Data uložena! Čas: " + data.last_update);
-        window.showDashboard();
-    };
-
-    app.innerHTML = `
-        <div class="card" style="max-width: 500px; margin: 20px auto; padding: 20px;">
-            <h2>🚗 Nastavení vozidla</h2>
-            <div style="margin-bottom: 15px;">
-                <label style="display:block; font-weight: bold;">Tachometr v autě (km):</label>
-                <input type="number" id="odo-input" value="${data.odometer || ''}" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-            </div>
-            <div style="margin-bottom: 15px;">
-                <label style="display:block; font-weight: bold;">Spotřeba z palubního PC (kWh/100km):</label>
-                <input type="text" id="cons-input" value="${data.vehicle_consumption || ''}" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-            </div>
-            <button onclick="processVehicleSave()" style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">💾 Uložit a aktualizovat</button>
-        </div>
-    `;
-}
+document.addEventListener('DOMContentLoaded', () => {
+    window.showDashboard();
+});
