@@ -1,32 +1,21 @@
-import { renderDashboard } from './ui-dashboard.js';
-import { renderVehicleSettings } from './ui-vehicle.js';
-import { renderSessionsList } from './ui-sessions-list.js';
-import { renderAddSession } from './ui-add-session.js';
-import { renderTariffs } from './ui-tariffs.js';
-import { renderImport } from './ui-import.js';
+import { calculateAcCost } from "./utils-tariffs.js";
 
-const savedData = localStorage.getItem('ev_data');
-window.appData = savedData ? JSON.parse(savedData) : {
-    charging_sessions: [],
-    tariffs: [],
-    odometer: 0,
-    vehicle_consumption: 0,
-    service_start_date: "",
-    last_update: ""
-};
+export function renderDashboard(data) {
+    const app = document.getElementById("app");
+    const km = parseFloat(data.odometer) || 0;
+    const sessions = data.charging_sessions || [];
+    const totalCost = calculateAcCost(sessions, data.tariffs);
 
-window.saveData = (newData) => {
-    localStorage.setItem('ev_data', JSON.stringify(newData));
-    window.appData = newData;
-};
-
-window.showDashboard = () => renderDashboard(window.appData);
-window.showVehicle = () => renderVehicleSettings(window.appData, window.saveData);
-window.showAddSession = () => renderAddSession(window.appData, window.saveData);
-window.showSessionsList = () => renderSessionsList(window.appData, window.saveData);
-window.showTariffs = () => renderTariffs(window.appData, window.saveData);
-window.showImport = () => renderImport(window.appData, window.saveData);
-
-document.addEventListener('DOMContentLoaded', () => {
-    window.showDashboard();
-});
+    app.innerHTML = `
+        <div style="padding: 20px; font-family: sans-serif; max-width: 600px; margin: auto;">
+            <div style="background: #2c3e50; color: white; padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                <h1 style="margin:0; opacity: 0.8;">EV MONITOR</h1>
+                <div style="font-size: 3em; margin: 20px 0; color: #2ecc71; font-weight: bold;">${Math.round(totalCost).toLocaleString()} Kč</div>
+                <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px;">
+                    Najeto: <b>${km.toLocaleString()} km</b>
+                </div>
+                <button onclick="window.showVehicle()" style="margin-top: 20px; padding: 12px 25px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">⚙️ Nastavení vozidla</button>
+            </div>
+        </div>
+    `;
+}
