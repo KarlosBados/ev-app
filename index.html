@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EV Costs Manager</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+    <nav>
+        <button onclick="showDashboard()">📊 Přehled</button>
+        <button onclick="showAddSession()">➕ Přidat (doplnit)</button>
+        <button onclick="showSessionsList()">📋 Historie</button>
+        <button onclick="showTariffs()">💰 Tarify</button>
+        <button onclick="showVehicle()">🚗 Auto</button>
+        <button onclick="showImport()">📥 Import MyŠkoda</button>
+    </nav>
+
+    <div id="app">
+        <p style="text-align:center; padding:50px;">Načítám aplikaci...</p>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+
+</body>
+</html>
